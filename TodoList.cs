@@ -1,20 +1,8 @@
 using System;
-using Svetomech.Collections.Generic;
-using Svetomech.Todo;
+using System.Collections.Generic;
 
-namespace Svetomech.Collections
+namespace Svetomech.Todo
 {
     [Serializable]
-    public class TodoList : IList<TodoItem>
-    {
-        private List<TodoItem> items = new List<TodoItem>();
-        
-        public void Add(TodoItem item) => items.Add(item);
-
-        public void Remove(TodoItem item) => items.Remove(item);
-
-        public void Clear() => items.Clear();
-
-        public void ForEach(Action<TodoItem> action) => items.ForEach(action);
-    }
+    public class TodoList : List<TodoItem> { }
 }

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using Svetomech.Collections;
 using Svetomech.Todo;
 
 namespace todo
 {
-    class Program
+    public static class Program
     {
         private const StringComparison comparison = StringComparison.OrdinalIgnoreCase;
         private static readonly string path = $"{nameof(todo)}-{nameof(items)}.bin";
