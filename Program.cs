@@ -15,19 +15,14 @@ namespace Svetomech.Todo
             try { todoItems = Deserialize<TodoList>(todoItemsPath); }
             catch { /* File is either empty or does not exist*/ }
 
+            string input;
             while (true)
             {
                 todoItems.ForEach(item => Console.WriteLine(item));
 
                 DisplayGreetingMessage();
-                string input = Console.ReadLine()?.TrimStart();
-
-                if (String.IsNullOrWhiteSpace(input) ||
-                    (input.Length < 3 && !input.EqualsOrdinal("--")))
-                {
-                    DisplayErrorMessage();
-                    continue;
-                }
+                input = Console.ReadLine()?.TrimStart();
+                if (!IsInputValid()) continue;
 
                 if (input.EqualsOrdinal("--"))
                 {
@@ -45,20 +40,15 @@ namespace Svetomech.Todo
 
                     todoItems.Add(item);
                 }
-                else
-                {
-                    DisplayErrorMessage();
-                    continue;
-                }
 
                 Serialize<TodoList>(todoItems, todoItemsPath);
             }
-
+            
             void DisplayGreetingMessage() =>
                 Console.Write("Enter command (+ item, - item, or -- to clear)): ");
-
-            void DisplayErrorMessage() =>
-                Console.WriteLine("Please, enter something meaningful.");
+            
+            bool IsInputValid() => String.IsNullOrWhiteSpace(input) || 
+                (input.Length < 3 && !input.EqualsOrdinal("--"));
         }
     }
 }
