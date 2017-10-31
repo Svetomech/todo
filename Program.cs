@@ -1,49 +1,49 @@
 ﻿using System;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using Svetomech.Todo;
+using Svetomech.Utilities.Extensions;
+using static Svetomech.Utilities.BinarySerializationUtils;
 
-namespace todo
+namespace Svetomech.Todo
 {
     public static class Program
     {
-        private const StringComparison comparison = StringComparison.OrdinalIgnoreCase;
-        private static readonly string path = $"{nameof(todo)}-{nameof(items)}.bin";
-        private static TodoList items = new TodoList();
-
-        public static void Main()
+        public static void Main(string[] args)
         {
-            Deserialize();
+            var todoItems = new TodoList();
+            string todoItemsPath = args.Length > 0 ? args[0] : 
+                $"{nameof(todoItems)}.bin";
+
+            try { todoItems = Deserialize<TodoList>(todoItemsPath); }
+            catch { /* File is either empty or does not exist*/ }
 
             while (true)
             {
-                items.ForEach(item => Console.WriteLine(item));
+                todoItems.ForEach(item => Console.WriteLine(item));
 
                 DisplayGreetingMessage();
                 string input = Console.ReadLine()?.TrimStart();
 
                 if (String.IsNullOrWhiteSpace(input) ||
-                    (input.Length < 3 && !input.Equals("--", comparison)))
+                    (input.Length < 3 && !input.EqualsOrdinal("--")))
                 {
                     DisplayErrorMessage();
                     continue;
                 }
 
-                if (input.Equals("--", comparison))
+                if (input.EqualsOrdinal("--"))
                 {
-                    items.Clear();
+                    todoItems.Clear();
                 }
-                else if (input[0] == '-')       // .StartsWith("-", comparison) is slower
+                else if (input[0] == '-')
                 {
                     var item = new TodoItem { PlainText = input.Substring(2) };
 
-                    items.Remove(item);
+                    todoItems.Remove(item);
                 }
-                else if (input[0] == '+')       // .StartsWith("+", comparison) is slower
+                else if (input[0] == '+')
                 {
                     var item = new TodoItem { PlainText = input.Substring(2) };
 
-                    items.Add(item);
+                    todoItems.Add(item);
                 }
                 else
                 {
@@ -51,38 +51,14 @@ namespace todo
                     continue;
                 }
 
-                Serialize();
+                Serialize<TodoList>(todoItems, todoItemsPath);
             }
+
+            void DisplayGreetingMessage() =>
+                Console.Write("Enter command (+ item, - item, or -- to clear)): ");
+
+            void DisplayErrorMessage() =>
+                Console.WriteLine("Please, enter something meaningful.");
         }
-
-        private static void Deserialize()
-        {
-            if (!File.Exists(path)) return;
-
-            var formatter = new BinaryFormatter();
-            using (var stream = new FileStream(path,
-                FileMode.Open, FileAccess.Read, FileShare.Read))
-            {
-                if (stream.Length == 0) return;
-
-                items = (TodoList)formatter.Deserialize(stream);
-            }
-        }
-
-        private static void Serialize()
-        {
-            var formatter = new BinaryFormatter();
-            using (var stream = new FileStream(path,
-                FileMode.Create, FileAccess.Write, FileShare.None))
-            {
-                formatter.Serialize(stream, items);
-            }
-        }
-
-        private static void DisplayGreetingMessage() =>
-            Console.Write("Enter command (+ item, - item, or -- to clear)): ");
-
-        private static void DisplayErrorMessage() =>
-            Console.WriteLine("Please, enter something meaningful.");
     }
 }
