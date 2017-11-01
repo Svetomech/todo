@@ -8,11 +8,6 @@ namespace Svetomech.Utilities
     {
         public static T Deserialize<T>(string filePath)
         {
-            if (!File.Exists(filePath))
-            {
-                throw new ArgumentException(nameof(filePath));
-            }
-
             var formatter = new BinaryFormatter();
             using (var stream = new FileStream(filePath,
                 FileMode.Open, FileAccess.Read, FileShare.Read))
