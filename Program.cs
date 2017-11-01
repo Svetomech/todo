@@ -41,7 +41,7 @@ namespace Svetomech.Todo
                     todoItems.Add(item);
                 }
 
-                Serialize<TodoList>(todoItems, todoItemsPath);
+                Serialize(todoItems, todoItemsPath);
             }
             
             void DisplayGreetingMessage() =>
