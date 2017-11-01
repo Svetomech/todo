@@ -22,7 +22,7 @@ namespace Svetomech.Todo
 
                 DisplayGreetingMessage();
                 input = Console.ReadLine()?.TrimStart();
-                if (!IsInputValid()) continue;
+                if (IsInputInvalid()) continue;
 
                 if (input.EqualsOrdinal("--"))
                 {
@@ -47,7 +47,7 @@ namespace Svetomech.Todo
             void DisplayGreetingMessage() =>
                 Console.Write("Enter command (+ item, - item, or -- to clear)): ");
             
-            bool IsInputValid() => String.IsNullOrWhiteSpace(input) || 
+            bool IsInputInvalid() => String.IsNullOrWhiteSpace(input) || 
                 (input.Length < 3 && !input.EqualsOrdinal("--"));
         }
     }
